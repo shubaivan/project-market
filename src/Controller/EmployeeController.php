@@ -256,6 +256,8 @@ class EmployeeController extends AbstractController
         #[MapEntity] Employee $employee,
         ManagerRegistry $doctrine
     ): JsonResponse {
+        $em = $doctrine->getManager();
+
         $em->remove($employee);
         $em->flush();
 
