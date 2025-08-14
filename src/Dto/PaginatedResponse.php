@@ -4,7 +4,7 @@ namespace App\Dto;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class PaginatedEmployeesResponse
+class PaginatedResponse
 {
     const DEFAULT_GROUP = 'Default';
     #[Groups([self::DEFAULT_GROUP])]

@@ -2,20 +2,33 @@
 // src/Entity/Company.php
 namespace App\Entity;
 
+use App\Repository\CompanyRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\Table(name: 'company')]
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'This name is already in use.'
+)]
 class Company
 {
+    const COMPANY_LIST = 'company_list';
+    const COMPANY_READ = 'company:read';
+    const COMPANY_WRITE = 'company:write';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups([self::COMPANY_READ, self::COMPANY_LIST])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[Groups([self::COMPANY_READ, self::COMPANY_LIST, self::COMPANY_WRITE])]
     private ?string $name = null;
 
     /**

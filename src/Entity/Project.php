@@ -2,20 +2,33 @@
 // src/Entity/Project.php
 namespace App\Entity;
 
+use App\Repository\ProjectRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ORM\Table(name: 'project')]
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'This name is already in use.'
+)]
 class Project
 {
+    const PROJECT_LIST = 'project_list';
+    const PROJECT_READ = 'project:read';
+    const PROJECT_WRITE = 'project:write';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups([self::PROJECT_READ, self::PROJECT_LIST])]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[Groups([self::PROJECT_READ, self::PROJECT_LIST, self::PROJECT_WRITE])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(targetEntity: Company::class, inversedBy: 'projects')]

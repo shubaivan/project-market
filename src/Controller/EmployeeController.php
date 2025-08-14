@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Dto\EmployeeRequest;
 use App\Dto\EmployeeSearchRequest;
-use App\Dto\PaginatedEmployeesResponse;
+use App\Dto\PaginatedResponse;
 use App\Entity\Employee;
 use App\Repository\EmployeeRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -82,7 +82,7 @@ class EmployeeController extends AbstractController
 
         $totalItems = $repository->countByCriteria($searchDto->getEmail());
 
-        $responseDto = new PaginatedEmployeesResponse(
+        $responseDto = new PaginatedResponse(
             $searchDto->getPage(),
             $searchDto->getLimit(),
             $totalItems,
@@ -92,7 +92,7 @@ class EmployeeController extends AbstractController
         return $this->json($responseDto, Response::HTTP_OK, [], [
             'groups' => [
                 Employee::EMPLOYEE_LIST,
-                PaginatedEmployeesResponse::DEFAULT_GROUP
+                PaginatedResponse::DEFAULT_GROUP
             ]
         ]);
     }
