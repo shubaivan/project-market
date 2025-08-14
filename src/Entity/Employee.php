@@ -17,37 +17,39 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Employee
 {
+    const EMPLOYEE_LIST = 'employee_list';
     const EMPLOYEE_READ = 'employee:read';
+    const EMPLOYEE_WRITE = 'employee:write';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups([self::EMPLOYEE_READ])]
+    #[Groups([self::EMPLOYEE_READ, self::EMPLOYEE_LIST])]
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 100)]
-    #[Groups([self::EMPLOYEE_READ, 'employee:write'])]
+    #[Groups([self::EMPLOYEE_READ, self::EMPLOYEE_WRITE, self::EMPLOYEE_LIST])]
     private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 100)]
-    #[Groups([self::EMPLOYEE_READ, 'employee:write'])]
+    #[Groups([self::EMPLOYEE_READ, self::EMPLOYEE_WRITE, self::EMPLOYEE_LIST])]
     private ?string $lastName = null;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Email(message: 'Please enter a valid email address.')]
-    #[Groups([self::EMPLOYEE_READ, 'employee:write'])]
+    #[Groups([self::EMPLOYEE_READ, self::EMPLOYEE_WRITE, self::EMPLOYEE_LIST])]
     private ?string $email = null;
 
     #[ORM\ManyToOne(targetEntity: Company::class, inversedBy: 'employees')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups([self::EMPLOYEE_READ, 'employee:write'])]
+    #[Groups([self::EMPLOYEE_READ, self::EMPLOYEE_WRITE])]
     private ?Company $company = null;
 
     /**
      * @var Collection<int, Project>
      */
     #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'employees')]
-    #[Groups([self::EMPLOYEE_READ, 'employee:write'])]
+    #[Groups([self::EMPLOYEE_READ, self::EMPLOYEE_WRITE])]
     private Collection $projects;
 
     public function __construct()

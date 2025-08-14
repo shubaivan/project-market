@@ -1,9 +1,29 @@
+# config/packages/nelmio_api_doc.yaml
 nelmio_api_doc:
     documentation:
+        openapi: 3.1.0  # or 3.1.0
         info:
             title: My App
             description: This is an awesome app!
             version: 1.0.0
-    areas: # to filter documented areas
+        tags:
+            - name: "Employees"
+              description: "Endpoints for managing employees"
+            - name: "Companies"
+              description: "Endpoints for managing companies"
+            - name: "Projects"
+              description: "Endpoints for managing projects"
+
+        # Optional: define auth here if desired
+        security:
+            - basicAuth: []
+        components:
+            securitySchemes:
+                basicAuth:
+                    type: http
+                    scheme: basic
+
+    # Single area to capture /api routes and ignore /api/doc
+    areas:
         path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - ^/api(?!/doc$)

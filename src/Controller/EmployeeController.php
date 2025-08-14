@@ -12,6 +12,7 @@ use OpenApi\Annotations as OA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraint;
@@ -24,8 +25,11 @@ class EmployeeController extends AbstractController
     /**
      * @OA\Get(
      *   summary="List employees with pagination and optional email search",
+     *   @OA\Tag(name="Employees"),
+     *   tags={"Employees"},
      *   description="Returns a paginated list of employees.
      *                You may filter results by partial email match.",
+     *   @OA\SecurityRequirement(name="basicAuth"),
      *   @OA\Parameter(
      *       name="page",
      *       in="query",
@@ -64,7 +68,6 @@ class EmployeeController extends AbstractController
      *   )
      * )
      *
-     * @OA\Tag(name="Employees")
      */
     #[Route('', name: 'employee_index', methods: ['GET'])]
     public function index(
@@ -86,13 +89,22 @@ class EmployeeController extends AbstractController
             $employees
         );
 
-        return $this->json($responseDto);
+        return $this->json($responseDto, Response::HTTP_OK, [], [
+            'groups' => [
+                Employee::EMPLOYEE_LIST,
+                PaginatedEmployeesResponse::DEFAULT_GROUP
+            ]
+        ]);
     }
 
     /**
      * Create a new employee.
      *
-     * @OA\Post(summary="Create an employee")
+     * @OA\Post(
+     *     summary="Create an employee",
+     *     security={{"basicAuth":{}}},
+     *     @OA\Tag(name="Employees"),
+     * )
      * @OA\RequestBody(
      *     required=true,
      *     description="JSON Payload for creating an Employee",
@@ -109,7 +121,6 @@ class EmployeeController extends AbstractController
      *     response=400,
      *     description="Validation errors"
      * )
-     * @OA\Tag(name="Employees")
      */
     #[Route('', name: 'employee_create', methods: ['POST'])]
     public function create(
@@ -129,7 +140,11 @@ class EmployeeController extends AbstractController
         $em->persist($employee);
         $em->flush();
 
-        return $this->json($employee, 201);
+        return $this->json($employee, Response::HTTP_CREATED, [], [
+            'groups' => [
+                Employee::EMPLOYEE_LIST,
+            ]
+        ]);
     }
 
     /**
@@ -137,7 +152,9 @@ class EmployeeController extends AbstractController
      *
      * @OA\Get(
      *     summary="Retrieve an employee",
-     *     description="Look up a single Employee by its ID."
+     *     description="Look up a single Employee by its ID.",
+     *     security={{"basicAuth":{}}},
+     *     @OA\Tag(name="Employees"),
      * )
      * @OA\Parameter(
      *     name="id",
@@ -155,13 +172,16 @@ class EmployeeController extends AbstractController
      *     response=404,
      *     description="Employee not found"
      * )
-     * @OA\Tag(name="Employees")
      */
     #[Route('/{id}', name: 'employee_show', methods: ['GET'])]
     public function show(
         #[MapEntity] Employee $employee,
     ): JsonResponse {
-        return $this->json($employee);
+        return $this->json($employee, Response::HTTP_OK, [], [
+            'groups' => [
+                Employee::EMPLOYEE_LIST,
+            ]
+        ]);
     }
 
     /**
@@ -171,7 +191,9 @@ class EmployeeController extends AbstractController
      *
      * @OA\Put(
      *     summary="Replace an employee",
-     *     description="Use PUT to fully replace the employee details."
+     *     description="Use PUT to fully replace the employee details.",
+     *     security={{"basicAuth":{}}},
+     *     @OA\Tag(name="Employees"),
      * )
      * @OA\Patch(
      *     summary="Partially update an employee",
@@ -204,7 +226,6 @@ class EmployeeController extends AbstractController
      *     response=404,
      *     description="Employee not found"
      * )
-     * @OA\Tag(name="Employees")
      */
     #[Route('/{id}', name: 'employee_update', methods: ['PUT', 'PATCH'])]
     public function update(
@@ -216,12 +237,18 @@ class EmployeeController extends AbstractController
     ): JsonResponse {
         $em = $doctrine->getManager();
 
-        $employee->setFirstName($dto->getFirstName());
-        $employee->setLastName($dto->getLastName());
+        $employee
+            ->setLastName($dto->getLastName())
+            ->setEmail($dto->getEmail())
+            ->setFirstName($dto->getFirstName());
 
         $em->flush();
 
-        return $this->json($employee);
+        return $this->json($employee, Response::HTTP_OK, [], [
+            'groups' => [
+                Employee::EMPLOYEE_LIST,
+            ]
+        ]);
     }
 
     /**
@@ -229,7 +256,9 @@ class EmployeeController extends AbstractController
      *
      * @OA\Delete(
      *     summary="Delete an employee",
-     *     description="Removes the specified Employee entity."
+     *     description="Removes the specified Employee entity.",
+     *     security={{"basicAuth":{}}},
+     *     @OA\Tag(name="Employees"),
      * )
      * @OA\Parameter(
      *     name="id",
@@ -249,7 +278,6 @@ class EmployeeController extends AbstractController
      *     response=404,
      *     description="Employee not found"
      * )
-     * @OA\Tag(name="Employees")
      */
     #[Route('/{id}', name: 'employee_delete', methods: ['DELETE'])]
     public function delete(
@@ -261,6 +289,6 @@ class EmployeeController extends AbstractController
         $em->remove($employee);
         $em->flush();
 
-        return $this->json(null, 204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }

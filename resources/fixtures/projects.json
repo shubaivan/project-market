@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Project Skyline",
+        "companyIndex": 0,
+        "employees": [0, 1]
+    },
+    {
+        "name": "Project Redwood",
+        "companyIndex": 1,
+        "employees": [2, 3]
+    },
+    {
+        "name": "Project Argent",
+        "companyIndex": 2,
+        "employees": [4, 5]
+    },
+    {
+        "name": "Project Muse",
+        "companyIndex": 3,
+        "employees": [6, 7]
+    },
+    {
+        "name": "Project HealthRise",
+        "companyIndex": 4,
+        "employees": [8, 9]
+    },
+    {
+        "name": "Project SparkLight",
+        "companyIndex": 5,
+        "employees": [10, 11]
+    },
+    {
+        "name": "Project Everest XL",
+        "companyIndex": 6,
+        "employees": [12, 13]
+    },
+    {
+        "name": "Project BlueShore",
+        "companyIndex": 7,
+        "employees": [14, 15]
+    },
+    {
+        "name": "Project SecureWatch",
+        "companyIndex": 8,
+        "employees": [16, 17]
+    },
+    {
+        "name": "Project Summit",
+        "companyIndex": 9,
+        "employees": [18, 19]
+    }
+]
